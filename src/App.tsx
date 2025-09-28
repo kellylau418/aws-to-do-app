@@ -21,12 +21,23 @@ function App() {
   function createTodo() { 
     //opens brower prompt to ask user for todo content
     //then sends create request to amplify backend
-    client.models.Todo.create({ content: window.prompt("Todo content") }); //window.prompt() opens popup
+    client.models.Todo.create({ content: window.prompt("Todo content"), isDone: false }); //window.prompt() opens popup
     //client.models holds all models defined in my schema
   }
 
   function deleteTodo(id: string){
     client.models.Todo.delete({id});
+  }
+
+  function updateIsDone(idd: string, isChecked: boolean){
+    client.models.Todo.update({
+      id: idd,
+      isDone: isChecked
+    })
+
+    console.log("UpdateIsDone, isDone: ",  );
+
+
   }
 
   return (
@@ -35,19 +46,16 @@ function App() {
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li 
-            onClick={() => deleteTodo(todo.id)}
-            key={todo.id}>{todo.content}
-          </li>
+          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", backgroundColor:"white"}}>
+            <li 
+              onClick={() => deleteTodo(todo.id)}
+              key={todo.id}>{todo.content}
+            </li>
+            <input type="checkbox" style={{marginRight:"10px"}} onChange={(e) => updateIsDone(todo.id, e.target.checked)} defaultChecked={!!todo.isDone}></input>
+          </div>
         ))}
       </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
+      
       <button onClick={signOut}>Sign out</button>
     </main>
   );
